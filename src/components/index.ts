@@ -1,2 +1,2 @@
-export { Box } from '@mui/material'
+export { Box, TextField, Avatar } from '@mui/material'
 export { AppNavBar } from './AppNavBar'
