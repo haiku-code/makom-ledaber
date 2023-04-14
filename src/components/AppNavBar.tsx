@@ -3,81 +3,88 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormGroup from '@mui/material/FormGroup';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
+import { LoginPopup } from 'components/LoginPopup';
+import { useToggle, useUpdateEffect } from 'react-use';
+import { useStores } from 'store/storeContext';
+import { observer } from 'mobx-react-lite';
+import { Avatar } from 'components';
 
-export function AppNavBar() {
-  const [auth, setAuth] = React.useState(true);
+export const Profile = observer(() => {
+	const rootStore = useStores();
+	const { user, signOut } = rootStore;
+	const [isOpen, toggleOpen] = useToggle(false);
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAuth(event.target.checked);
-  };
+  useUpdateEffect(() => {
+    if(user && isOpen) {
+      toggleOpen();
+    }
+  }, [user]);
 
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+	const handleLogin = () => {
+		toggleOpen();
+		handleClose();
+	};
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+	const handleLogout = () => {
+		handleClose();
+    signOut();
+	};
 
-  return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-          {/* <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton> */}
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Makom Ledaber
-          </Typography>
-          {auth && (
-            <div>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={handleClose}>My Account</MenuItem>
-                <MenuItem onClick={handleClose}>Log Out</MenuItem>
-              </Menu>
-            </div>
-          )}
-        </Toolbar>
-      </AppBar>
-    </Box>
-  );
+	const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
+
+	return (
+		<>
+			<LoginPopup isOpen={isOpen} onClose={toggleOpen} />
+			{user ? (
+				<Avatar src={user.photoURL as string} onClick={handleMenu} />
+			) : (
+				<Avatar onClick={handleMenu} />
+			)}
+			<Menu
+				anchorEl={anchorEl}
+				anchorOrigin={{
+					vertical: 'bottom',
+					horizontal: 'right',
+				}}
+				keepMounted
+				transformOrigin={{
+					vertical: 'top',
+					horizontal: 'right',
+				}}
+				open={Boolean(anchorEl)}
+				onClose={handleClose}
+			>
+				{user ? (
+					<MenuItem onClick={handleLogout}>Logout</MenuItem>
+				) : (
+					<MenuItem onClick={handleLogin}>Login</MenuItem>
+				)}
+			</Menu>
+		</>
+	);
+});
+
+export function AppNavBar() {
+	return (
+		<Box sx={{ flexGrow: 1 }}>
+			<AppBar position="static">
+				<Toolbar>
+					<Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+						Makom Ledaber
+					</Typography>
+					<Profile />
+				</Toolbar>
+			</AppBar>
+		</Box>
+	);
 }

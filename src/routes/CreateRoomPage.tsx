@@ -1,8 +1,10 @@
+import { TextField } from "components";
+
 export function CreateRoomPage() {
 
 	return (
 		<div>
-			Create a new Room!
+			  <TextField label="Room Name" variant="outlined" />
 		</div>
 	);
 }
