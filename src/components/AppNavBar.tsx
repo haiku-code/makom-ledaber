@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { LoginPopup } from 'components/LoginPopup';
-import { useToggle } from 'react-use';
+import { useToggle, useUpdateEffect } from 'react-use';
 import { useStores } from 'store/storeContext';
 import { observer } from 'mobx-react-lite';
 import { Avatar } from 'components';
@@ -16,7 +16,13 @@ export const Profile = observer(() => {
 	const { user, signOut } = rootStore;
 	const [isOpen, toggleOpen] = useToggle(false);
 
-	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  useUpdateEffect(() => {
+    if(user && isOpen) {
+      toggleOpen();
+    }
+  }, [user]);
 
 	const handleLogin = () => {
 		toggleOpen();
@@ -36,7 +42,6 @@ export const Profile = observer(() => {
 		setAnchorEl(null);
 	};
 
-	console.log('hello sunshine!', user);
 	return (
 		<>
 			<LoginPopup isOpen={isOpen} onClose={toggleOpen} />
@@ -48,7 +53,7 @@ export const Profile = observer(() => {
 			<Menu
 				anchorEl={anchorEl}
 				anchorOrigin={{
-					vertical: 'top',
+					vertical: 'bottom',
 					horizontal: 'right',
 				}}
 				keepMounted

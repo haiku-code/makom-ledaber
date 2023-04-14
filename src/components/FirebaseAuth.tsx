@@ -1,5 +1,4 @@
 import {useMount} from 'react-use';
-import {loadFirebaseUI} from '../../firebase.config';
 import 'firebaseui/dist/firebaseui.css';
 import { useStores } from 'store/storeContext';
 
@@ -9,9 +8,7 @@ export function FirebaseAuth() {
   const rootStore = useStores();
 
   useMount(function attachFirebaseUI() {
-    loadFirebaseUI(CONTAINER_ID, (user) => {
-      rootStore.user = user;
-    })
+    rootStore.loadFirebaseUI(CONTAINER_ID);
   });
 
   return (
