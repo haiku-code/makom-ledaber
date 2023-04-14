@@ -24,6 +24,3 @@ dist-ssr
 *.sw?
 .firebase
 .vite
-
-# do not include until keys moved to envirnmont variables
-firebase.config.ts

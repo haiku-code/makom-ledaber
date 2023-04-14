@@ -1,6 +1,6 @@
 import { User } from '@firebase/auth';
 import { makeAutoObservable } from 'mobx';
-import { initFirebaseAuth } from '../../firebase.config';
+import { initFirebaseAuth } from 'services/auth.service';
 import { LocalAuth } from 'models/auth.model';
 
 
@@ -10,10 +10,10 @@ export class RootStore {
 
   constructor() {
     makeAutoObservable(this);
-    this.auth = initFirebaseAuth((user) => this.user = user);
+    this.auth = initFirebaseAuth((user) => this.setUser(user));
 
     if(this.auth.currentUser) {
-      this.user = this.auth.currentUser;
+      this.setUser(this.auth.currentUser);
     }
   }
 
